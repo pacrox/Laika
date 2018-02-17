@@ -22,3 +22,6 @@ for KSP-KoS v.1.1.5.0.
   
   Build Laika Computer and pay attention not to get any error. Once builded, you can reboot KoS to start Laika Computer.
   
+## Laika Sample Interface Screen
+
+![Image][https://github.com/pacrox/Laika/blob/master/doc/images/Laika%20Sample%20Screen.png]
