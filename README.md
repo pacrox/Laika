@@ -3,29 +3,31 @@ for KSP-KoS v.1.1.5.0.
 
 ## Installation
 
-  Laika should be installed in drive `0:` of KoS, which is normally located in `Kerbal Space Program/Ships/Scripts`, mantaining the same file structure of the package.
+  Install Laika package in to drive `0:` of KoS, which is normally located in `Kerbal Space Program/Ships/Scripts`, mantaining the same file structure of the package.
   
   The package contains the following files: 
-  * `boot/laika.ks                ` the bootstrap file that lauches Laika Configurator
-  * `lib/laika/laika_conf.ks      ` Laika Configurator to setup Laika Computer
-  * `lib/laika/laika_core.ks      ` Laika Computer that will run during missions
-  * `lib/laika/preprocessor.ks    ` a code preprocessor used to build Laika Computer
-  * `lib/laika/lib_lk_gui.ks      ` Laika's GUI library
-  * `lib/laika/ozin/*             ` libraries needed by Laika Configurator
-  * `lib/laika/mod/*              ` modules used to expand Laika Computer fuctionalities
+  * `boot/laika.ks                ` the bootstrap file that launches Laika Configurator,
+  * `lib/laika/laika_conf.ks      ` Laika Configurator to setup Laika Computer,
+  * `lib/laika/laika_core.ks      ` Laika Computer that will run during missions,
+  * `lib/laika/preprocessor.ks    ` a code preprocessor used to build Laika Computer,
+  * `lib/laika/lib_lk_gui.ks      ` Laika's GUI library,
+  * `lib/laika/ozin/*             ` libraries needed by Laika Configurator,
+  * `lib/laika/mod/*              ` modules used to expand Laika Computer functionalities.
+
 
 ## Usage
 
   Set `boot/laika.ks` as bootstrap file using the part interface of the Kos Computer in the Building Facility, and launch your vessel.
   
-  Once on the Launch-Pad, the KoS terminal should open and Laika Configurator will automatically run. Here you can choose the modules to install and configure them. By default, there are no modules installed.
+  Once on the Launch-Pad, the KoS terminal should automatically open and Laika Configurator will run. Here you can choose the modules to install and configure them. By default, there are no modules installed.
   
   Build Laika Computer and pay attention not to get any error. Once builded, you can reboot KoS to start Laika Computer.
 
+
 ## Laika Configurator
 
-  On launch will scan all the modules in `lib/laika/mod/`, reading for eachone all the installation informations.
-  Once ready, will show the menu interface.
+  On launch, it will scan all the modules present in `lib/laika/mod/`, reading for each one the installation informations.
+  Once ready, it'll show the menu interface.
   
 ```
    Лайка Модули Конфигурация в.0.9.3.
@@ -43,6 +45,8 @@ for KSP-KoS v.1.1.5.0.
    REBOOT
    EXIT
 ```
+
+
 ### Installing and configurig modules
 
   Select the modules to install in the list available from the `>> INSTALL MODULES` menu. If found, a description for the current modules will be shown at the bottom of the terminal screen.
@@ -69,7 +73,7 @@ for KSP-KoS v.1.1.5.0.
    RETURN
 ```
 
-  Entering each module, you can configure the interface installation options as well as any extra mod specific parameter.
+  Entering each module, you can configure the installation options as well as any extra mod specific parameter.
 ```
    'Flight Data Recorder' CONFIGURATION
    ================================================
