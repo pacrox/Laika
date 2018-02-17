@@ -71,3 +71,13 @@ for KSP-KoS v.1.1.5.0.
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛          ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
  ⑦ След.  ⑧ Пред.                                         ⑨ Поступать
 ```
+
+## Interface Navigation
+  While the focus is on KSP interface, you can navigate the interface with Action Group commands. 
+  
+  You can use:
+  * `AG7` to move to the next button,
+  * `AG8` to move to the previous button.
+  * `AG9` to trigger the current button.
+  
+  If the focus is on KoS terminal, you can navigate using the `cursor arrows`, trigger the current button with `ENTER` and the НАЗАД (Back) button with `DELETE`. You can use the number keys `7`, `8` and `9` aswell, that replicates the Action Group's behaviour.
