@@ -14,3 +14,11 @@ for KSP-KoS v.1.1.5.0.
   * `lib/laika/ozin/*             ` libraries needed by Laika Configurator
   * `lib/laika/mod/*              ` modules used to expad Laika Computer fuctionalities
 
+## Usage
+
+  Set `boot/laika.ks` as bootstrap file using the part interface of the Kos Computer in the Building Facility, and lauch the vessel.
+  
+  Once on the Launch-Pad, the KoS terminal should open and Laika Configurator will automatically run. Here you can choose the modules to install and configure them. By default, there are no modules installed.
+  
+  Build Laika Computer and pay attention not to get any error. Once builded, you can reboot KoS to start Laika Computer.
+  
