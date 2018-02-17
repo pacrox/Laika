@@ -16,7 +16,7 @@ for KSP-KoS v.1.1.5.0.
 
 ## Usage
 
-  Set `boot/laika.ks` as bootstrap file using the part interface of the Kos Computer in the Building Facility, and launch the vessel.
+  Set `boot/laika.ks` as bootstrap file using the part interface of the Kos Computer in the Building Facility, and launch your vessel.
   
   Once on the Launch-Pad, the KoS terminal should open and Laika Configurator will automatically run. Here you can choose the modules to install and configure them. By default, there are no modules installed.
   
