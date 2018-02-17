@@ -167,9 +167,7 @@ for KSP-KoS v.1.1.5.0.
 
 ## Credits
 
-#### Laika Modular Computer
-#### Laika Configurator
-#### KoS Preprocessor
+#### Laika Modular Computer, Laika Configurator and KoS Preprocessor
   Made and maintained by Pacrox.
 
 #### Ozin Libraries
@@ -181,3 +179,8 @@ for KSP-KoS v.1.1.5.0.
   Made and maintained by Pacrox, uses code portions by TDW86.
   
   https://github.com/KSP-KOS/KSLib
+
+#### KoS Language Interpreter and Compiler
+  Originally made by Nivekk, currently mantained by Dunbaratu.
+  
+  https://github.com/KSP-KOS/KOS
