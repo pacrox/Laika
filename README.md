@@ -12,7 +12,7 @@ for KSP-KoS v.1.1.5.0.
   * `lib/laika/preprocessor.ks    ` a code preprocessor used to build Laika Computer
   * `lib/laika/lib_lk_gui.ks      ` Laika's GUI library
   * `lib/laika/ozin/*             ` libraries needed by Laika Configurator
-  * `lib/laika/mod/*              ` modules used to expad Laika Computer fuctionalities
+  * `lib/laika/mod/*              ` modules used to expand Laika Computer fuctionalities
 
 ## Usage
 
