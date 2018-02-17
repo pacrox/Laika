@@ -537,6 +537,9 @@ horizLine( bound(2), config.color.separator, config.line.separator);
 % }}}
 
 print(1, ["out/" file], '-dsvg');
+disp("Saved SVG file.");
 print(1, ["out/" file], '-dpdf');
+disp("Saved PDF file.");
 
+disp("Done.");
 # vim: fdc=6 fdm=marker :
