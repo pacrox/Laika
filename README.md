@@ -1,5 +1,5 @@
 # Laika Modular Computer
-for KSP-KoS v.1.1.5.0.
+for KSP v.1.3.1 and KoS v.1.1.5.0.
 
 ## Installation
 
