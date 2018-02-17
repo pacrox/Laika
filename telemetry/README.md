@@ -26,3 +26,11 @@ Once done, you'll find the result in `out` sub-directory.
 PID_log.pdf     PID_log.svg
 ```
 
+## Requirements
+
+Download and install GNU-Octave from the official web-site:
+  * https://www.gnu.org/software/octave/
+
+Although `FDR_Grapher.m` should run on MathLab, it hasn't be tested.
+
+`SVG` and `PDF` files can be view with any web-browser (some additional extension may be required).
