@@ -407,19 +407,21 @@ FUNCTION creditsScreen {
 	CLEARSCREEN.
 
 	PRINT "    LAIKA CREDITS" +ENDL +" ".
-	PRINT "  - Laika Modular Computer and".
+	PRINT "  - Laika Modular Computer".
 	PRINT "  - Laika Computer Configurator".
-	PRINT "      is made and mantained by Pacrox.".
+	PRINT "  - KoS Preprocessor".
+	PRINT "      are made and maintained by Pacrox.".
 	PRINT "      (https://github.com/pacrox/Laika)".
 
 	PRINT " ".
 	PRINT "  - Ozin Libraries".
 	PRINT "      were modified form the originals".
-	PRINT "      made and mantained by ozin370.".
+	PRINT "      made and maintained by ozin370.".
 	PRINT "      (https://github.com/ozin370/Script)".
 
 	PRINT " ".
 	PRINT "  - Laika GUI Library (lk_gui)".
+	PRINT "      is made and maintained by Pacrox.".
 	PRINT "      uses code portions from TDW86.".
 	PRINT "      (https://github.com/KSP-KOS/KSLib)".
 
