@@ -122,7 +122,7 @@ PARAMETER _mName	IS "UNKN", // Module menu name
 	_extraP		IS FALSE.  // Extra configuration for this module(*)
 
 // The followings are mandatory lines.
-PRINT "Loading: " +_mFullN.	// fullname
+PRINT msgModF +_mFullN.		// Module loaded message.
 
 SET _extraP TO import( _extraP, _defaultP).
 
