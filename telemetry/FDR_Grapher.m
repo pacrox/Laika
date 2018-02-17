@@ -1,4 +1,7 @@
-
+# GNU Octave, version 4.0.3
+#
+# FDR Grapher for Laika Flight Data Recorder.
+# by Pacrox (laika-dev-team)
 
 clear;
 
@@ -533,7 +536,7 @@ horizLine( bound(2), config.color.separator, config.line.separator);
 #set(gca, 'children', get(gca, 'children')([6 1 2 3 4 5 7 8 9]));
 % }}}
 
-print(1, file, '-dsvg');
-print(1, file, '-dpdf');
+print(1, ["out/" file], '-dsvg');
+print(1, ["out/" file], '-dpdf');
 
 # vim: fdc=6 fdm=marker :
