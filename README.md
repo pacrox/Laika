@@ -24,4 +24,4 @@ for KSP-KoS v.1.1.5.0.
   
 ## Laika Sample Interface Screen
 
-![Image][https://github.com/pacrox/Laika/blob/master/doc/images/Laika%20Sample%20Screen.png]
+![Image](https://github.com/pacrox/Laika/blob/master/doc/images/Laika%20Sample%20Screen.png)
