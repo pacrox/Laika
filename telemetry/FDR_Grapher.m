@@ -152,7 +152,7 @@ endfunction
 # LOAD DATA FILE {{{
 global fdata fld;
 file = input("Enter FDR filename (without extension): ", "s");
-#file = "PID13_log";
+#file = "FDR_log";
 
 source([file ".fdo"]);
 fdata = transpose(fdata);
@@ -181,29 +181,21 @@ endif
 #fdata = fdata(:,19:end);
 # }}}
 
-# PAGE SETTINGS {{{
-global graph;
-graph.number = 1;
-graph.width = [0.1 0.8];
-graph.level = 0.95;
-
-page = figure(1);
-set(page, 'papertype', "a4");
-set(page, 'paperorientation', "portrait");
-set(page, 'paperunits', "centimeters");
-set(page, 'paperpositionmode', "manual");
-set(page, 'paperposition', [ .2, 1, 20.8, 28.7] );
-set (0, "defaulttextfontsize", 5.5);
-
-clf;
-hold on;
-# }}}
-
 # SETUP TIME SCALE {{{
 global t;
 t.data = fdata(fld.("MET"),:);
 t.min = (min(t.data));
 t.max = (max(t.data));
+
+mint = input(["Min time (" num2str(round(t.min)) ")? "]);
+if size(mint) != 0 
+	t.min = mint;
+endif
+
+maxt = input(["Max time (" num2str(round(t.max)) ")? "]);
+if size(maxt) != 0 
+	t.max = maxt;
+endif
 
 t.gap = 120;
 if ( (t.max-t.min) < 2520 )
@@ -227,6 +219,39 @@ endif
 if ( (t.max-t.min) < 60 )
 	t.gap = 1;
 endif
+
+if t.min >= 0
+	t.min = t.min-(mod(t.min, t.gap));
+else
+	if mod(t.min, t.gap) != 0
+		tmpmin = t.min-(mod(t.min, t.gap));
+		if tmpmin > min(t.data)
+			t.min = tmpmin;
+		else
+			t.min = t.min+(t.gap - mod(t.min, t.gap));
+		endif
+	endif
+endif
+
+# }}}
+
+
+# PAGE SETTINGS {{{
+global graph;
+graph.number = 1;
+graph.width = [0.1 0.8];
+graph.level = 0.95;
+
+page = figure(1);
+set(page, 'papertype', "a4");
+set(page, 'paperorientation', "portrait");
+set(page, 'paperunits', "centimeters");
+set(page, 'paperpositionmode', "manual");
+set(page, 'paperposition', [ .2, 1, 20.8, 28.7] );
+set (0, "defaulttextfontsize", 5.5);
+
+clf;
+hold on;
 # }}}
 
 graph.main.h = 0.28;
