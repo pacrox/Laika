@@ -14,10 +14,12 @@ Copyright (C) 2016 John W. Eaton and others.
 
 >> FDR_Grapher
 Enter FDR filename (without extension): PID_log
+Min time (-14)? 0
+Max time (198)?
 Saved SVG file.
 Saved PDF file.
 Done.
->>>
+>>
 ```
 
 Once done, you'll find the result in `out` sub-directory.
