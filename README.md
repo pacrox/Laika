@@ -171,18 +171,13 @@ for KSP v.1.3.1 and KoS v.1.1.5.0.
 
 ## Credits
 
-#### Laika Modular Computer, Laika Configurator and KoS Preprocessor
+#### Laika Modular Computer, Laika Configurator, Laika UI Library and KoS Preprocessor
   Made and maintained by Pacrox.
 
 #### Ozin Libraries
   Modified from the originals made by ozin370.
-
-  https://github.com/ozin370/Script
-
-#### Laika GUI Library (lk_gui)
-  Made and maintained by Pacrox, uses code portions by TDW86.
   
-  https://github.com/KSP-KOS/KSLib
+  https://github.com/ozin370/Script
 
 #### KoS Language Interpreter and Compiler
   Originally made by Nivekk, currently mantained by Dunbaratu.
