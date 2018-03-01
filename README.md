@@ -1,6 +1,8 @@
 # Laika Modular Computer
 for KSP v.1.3.1 and KoS v.1.1.5.0.
 
+![Laika the Space Dog](http://images6.fanpop.com/image/photos/40200000/Soviet-Space-Dogs-Laika-animal-heroes-40261388-354-500.jpg)
+
 ## Installation
 
   Install Laika package in to drive `0:` of KoS, which is normally located in `Kerbal Space Program/Ships/Scripts`, mantaining the same file structure of the package.
