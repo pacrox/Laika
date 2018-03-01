@@ -6,12 +6,13 @@
 //											
 //											
 // * Updated for KoS 1.1.5.0.								
+// * Upgraded to lib_laikaUI.								
 //											
 
 @LAZYGLOBAL OFF.
 PARAMETER _boot IS TRUE.
 
-GLOBAL LK_VER	IS "в.0.9.5".
+GLOBAL LK_VER	IS "в.1.0.2".
 
 //					
 //    INITIAL SETUP			
@@ -24,14 +25,13 @@ IF _boot {
 }
 
 // Default screen dimensions. (Laika supports dynamic screen resizing)
-//SET TERMINAL:WIDTH TO 50. 	// Minimum width: 44
-//SET TERMINAL:HEIGHT TO 36.
-LOCAL mTW IS 46.	// Minimum Terminal width
-LOCAL mTH IS 24.	// Minimum Terminal Height
+//SET TERMINAL:WIDTH TO 50. 	// Minimum width:  46
+//SET TERMINAL:HEIGHT TO 36.	// Minimum height: 24
 
 GLOBAL LAIKA	IS "Лайка Модульный Компьютер " +LK_VER.
 GLOBAL LK_CONF	IS LEXICON().
-GLOBAL LK_MOD	IS LIST().
+GLOBAL LK_ADDON	IS LIST().
+
 
 GLOBAL msgModF IS " Установлен: ".	// "INSTALLED:"
 
@@ -88,149 +88,27 @@ LOCAL BAT_CPM IS RES[BATTERIES]:CAPACITY/6000.		// BATtery Capacity Per Minute i
 LOCAL BAT_CPS IS RES[BATTERIES]:CAPACITY/100.		// BATtery Capacity Per Second in %.
 //}}}
 
-//					
-//    LIB_LK_GUI HELPERS		
-//					
-// {{{
-FUNCTION SHOW_MENU {
-	PARAMETER m.
-
-	GUI_drawMenuScreen(m, LK_MENUS[m][0], LK_MENUS[m][1]).
-	GUI_setChoice(1).
-	DUPDATE.
-}
-
-FUNCTION DUPDATE {
-	IF LK_CMDS[GUIMenuName][2]:HASKEY("DISP")
-		LK_CMDS[GUIMenuName][2]["DISP"]().
-}
-
-LOCAL ERLN IS "".
-FUNCTION SUPDATE {
-	UNTIL FALSE {
-		IF TERMINAL:WIDTH < mTW SET TERMINAL:WIDTH TO mTW.
-		IF TERMINAL:HEIGHT < mTH SET TERMINAL:HEIGHT TO mTH.
-		SET SCR[0] TO TERMINAL:WIDTH.
-		SET SCR[1] TO TERMINAL:HEIGHT.
-		WAIT 0.2.
-		IF TERMINAL:WIDTH = SCR[0] AND TERMINAL:HEIGHT = SCR[1]
-			BREAK.
-	}
-	SET DIS[2] TO SCR[0]-(DIS[0]*2)-MOD(SCR[0],2).
-	SET DIS[3] TO SCR[1]-DIS[1]-15.
-
-	UNTIL ERLN:LENGTH > DIS[2]
-		SET ERLN TO ERLN + " ".
-}
-
-FUNCTION DPRINT {
-	PARAMETER t,
-		x, y.
-
-	SET t TO t:TOSTRING.
-	LOCAL l IS t:LENGTH.
-	IF l = 0 RETURN.
-
-	IF x = "c" SET x TO ROUND((DIS[2]-t:LENGTH)/2).
-	ELSE IF x < 0 SET x TO DIS[2] +x.
-	IF y < 0 SET y TO DIS[3] +y.
-	IF x >= DIS[2] RETURN.
-	IF y >= DIS[3] OR y < 0 RETURN.
-
-	IF x >= 0 {
-		LOCAL ax IS DIS[2]-x.
-		IF l > ax
-			SET t TO t:SUBSTRING(0, ax).
-	} ELSE {
-		IF l <= -x RETURN.
-		SET t TO t:SUBSTRING(-x, l+x).
-		IF l+x > DIS[2]
-			SET t TO t:SUBSTRING(0, DIS[2]).
-		SET x TO 0.
-	}
-
-	PRINT t AT(DIS[0]+x, DIS[1]+y).
-}
-
-FUNCTION DLINE {
-	PARAMETER c, y.
-
-	LOCAL l IS "".
-	UNTIL l:LENGTH > DIS[2]
-		SET l TO l +c.
-
-	DPRINT(l, 0, y).
-}
-
-FUNCTION DCLEAR {
-	PARAMETER a IS DIS.
-
-	LOCAL w IS ERLN:SUBSTRING(0, a[2]).
-	LOCAL i IS a[1].
-	UNTIL i >= (a[1]+a[3]) {
-		PRINT w AT(a[0], i).
-		SET i TO i +1.
-	}
-}
-// }}}
-
-LOAD("/lib/", "lib_lk_gui").
+//LOAD("/lib/", "lib_lk_gui").
+//RUNPATH("0:/lib/laika/lib_laikaUI.ks").
+LOAD("/lib/", "lib_laikaUI").
 LOAD("/", "config.lk").
 
 //					
 //    MENU REGISTRY 			
 //					
 // {{{
-GLOBAL LK_MAIN IS "ЛАЙКА".
+GLOBAL UImain IS "ЛАЙКА".
+GLOBAL UIback IS "НАЗАД".
 
-//											
-// LK_MENUS LEXICON( menu_name, LIST( back_menu, LIST(btn_name), LIST(is_submenu?) ) )	
-//											
-//	LK_MENUS[menu_name][0] = back_menu						
-//	                   [1] = LIST(btn_name)						
-//			   [2] = LIST(is_submenu?)					
-//											
-GLOBAL LK_MENUS IS LEXICON(
-	LK_MAIN, LIST( "SYSTEM",
-		LIST( "", "", "", "", "", "", "", "" ),
-		LIST( FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE )),
-	"SYSTEM", LIST( LK_MAIN,
-		LIST( "", "", "", "QUIT", "", "", "", "REBOOT" ), 
-		LIST( FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE ))
+GLOBAL LK_MOD IS LEXICON(
+	"MAIN", UIinitMenu( 0, UImain, LEXICON(
+		0, LIST( UIback, { gotoMenu(LK_MOD["SYSTEM"]).}))
+	),
+	"SYSTEM", UIinitMenu( 0, "SYSTEM", LEXICON(
+		7, LIST("QUIT", {SET QUIT TO TRUE.}),
+		8, LIST("REBOOT", {WAIT 0.5. REBOOT.}))
+	)	
 ).
-
-//											
-// LK_CMDS LEXICON( menu_name, LIST( LEXICON(btn_name, function), LIST(daemons) ) )	
-//											
-//	LK_CMDS[menu_name][0] = LEXICON(btn_name, function)				
-//	                  [1] = LIST(daemons)						
-// 											
-GLOBAL LK_CMDS IS LEXICON(
-	LK_MAIN, LIST(
-			LEXICON(),
-			LIST(), LEXICON()),
-	"SYSTEM", LIST( 
-			LEXICON(
-				"QUIT",		{ SET QUIT TO TRUE. },
-				"REBOOT",	{ WAIT 0.5. REBOOT. }),
-			LIST(), LEXICON())
-).
-
-// MENU COMMANDS PARSER {{{
-FUNCTION EXEC_MC {		// EXECute_MenuCommand
-	LOCAL c IS GUIChoices[GUICurrChoice][0].
-	LOCAL m IS GUIMenuName.
-
-	IF LK_CMDS[m][0]:HASKEY(c) {
-		LK_CMDS[m][0][c]().
-	}
-
-	LOCAL b IS GUIChoices[GUICurrChoice][3].
-	IF LK_MENUS[GUIMenuName][2][b] {
-		SHOW_MENU(LK_MENUS[GUIMenuName][1][b]).
-	} 
-} // }}}
-
 // }}}
 
 //					
@@ -238,7 +116,7 @@ FUNCTION EXEC_MC {		// EXECute_MenuCommand
 //					
 // {{{
 GLOBAL DAEMONS IS LEXICON(
-	"LCI",	D_LCI@		// Laika Core Informations
+//	"LCI",	D_LCI@		// Laika Core Informations
 ).
 
 // }}}
@@ -248,13 +126,16 @@ GLOBAL DAEMONS IS LEXICON(
 //					
 // {{{
 FUNCTION CALL_D {		// CALL all Daemons
-	LOCAL m IS GUIMenuName.	// current menu
+//	LOCAL m IS GUIMenuName.	// current menu
 
 	// Call daemons
 	FOR k IN DAEMONS:KEYS { DAEMONS[k](). }
 
+	IF UIcurrMenu:HASKEY("daemon")
+		FOR i IN UIcurrMenu["daemon"] i:CALL().
+
 	// Call menu specific daemons
-	FOR i IN LK_CMDS[m][1] { i(). }
+//	FOR i IN LK_CMDS[m][1] { i(). }
 }
 
 FUNCTION D_LCI {		// Display Laika Core Informations
@@ -273,42 +154,11 @@ FUNCTION D_LCI {		// Display Laika Core Informations
 }
 // }}}
 
-//					
-//    USER INTERFACE NAVIGATION 	
-//					
-// {{{
-
-// A table that defines UI_Nav-Actions.
-GLOBAL UI_NAV IS LEXICON(
-	 1,	{GUI_setChoice(GUICurrChoice+1).},		// NEXT
-	-1,	{GUI_setChoice(GUICurrChoice-1).},		// PREV
-	 0,	{						// ENTER
-			IF GUIChoices[GUICurrChoice][0] = "BACK" {
-				UI_NAV[2]().		// BACK
-			} ELSE { PRINT beep. EXEC_MC. }
-		},
-	 2,	{ IF GUIMenuBack <> "" {
-			PRINT beep. SHOW_MENU(GUIMenuBack).} }	// BACK
-).
-
-// A table to link the Key-Pressed to the UI_Nav-Action.
-GLOBAL UI_KEY IS LEXICON(
-	55,	 1,		// '7' key	[NEXT]
-	56,	-1,		// '8' key	[PREV]
-	57,	 0,		// '9' key	[ENTER]
-	57351, 	-1,		// UP    key	[PREV]
-	57352, 	 1,		// DOWN  key	[NEXT]
-	57353, 	 2,		// LEFT  key	[BACK]
-	57354, 	 0		// RIGHT key	[ENTER]
-).
-//}}}
-
-GLOBAL SCR	IS LIST(0, 0).		// Width, Height
-GLOBAL DIS	IS LIST(1, 2, 0, 0).	// OriginX, OriginY, W, H.
 GLOBAL QUIT	IS FALSE.
 
 SET CONFIG:IPU	TO LK_CONF["CPU_SPEED"].
 GLOBAL CLOCK	IS LK_CONF["CPU_CLOCK"].
+GLOBAL CLOCK	IS 0.05.
 
 //					
 //    LOAD MODULES			
@@ -329,7 +179,8 @@ FUNCTION import {
 }
 
 // Loads all the modules that where listed in the config file.
-FOR m IN LK_MOD {
+FOR m IN LK_ADDON {
+	//RUNPATH( LK_CONF["MODS_DISK"] +":/mod/" + m[0], m[1], m[2], m[3], m[4]).
 	RUNPATH( LK_CONF["MODS_DISK"] +":/mod/" + m[0], m[1], m[2], m[3], m[4]).
 }
 // }}}
@@ -339,32 +190,33 @@ PRINT "Ладно.".
 WAIT 2.
 PRINT BEEP.
 
-SUPDATE.
-SHOW_MENU(LK_MAIN).
+UIsetMenu(LK_MOD["MAIN"]).
+UIupdate().
 
 //					
 //    MAIN LOOP 			
 //					
 // {{{
+LOCAL cs IS CONFIG:IPU.
+LOCAL keyCur IS 0.
 UNTIL QUIT {
 	// Check if term has been resized
 	IF TERMINAL:WIDTH <> SCR[0] OR TERMINAL:HEIGHT <> SCR[1] {
-		SUPDATE.
-		GUI_redrawMenuScreen().
-		DUPDATE.
+		SET CONFIG:IPU	TO 1000.
+		UIupdate().
+		SET CONFIG:IPU	TO cs.
 	}
 
 	// Check AG-keys
-	IF AG7 { UI_NAV[ 1](). AG7 OFF. }	// [NEXT]
-	IF AG8 { UI_NAV[-1](). AG8 OFF. }	// [PREV]
-	IF AG9 { UI_NAV[ 0](). AG9 OFF. }	// [ENTER]
+	IF AG7 { navUI["btn:next"](). AG7 OFF. }	// [NEXT]
+	IF AG8 { navUI["btn:prev"](). AG8 OFF. }	// [PREV]
+	IF AG9 { navUI["btn:enter"](). AG9 OFF. }	// [ENTER]
 
 	// Check keyboard-keys
 	IF TERMINAL:INPUT:HASCHAR() {
-		LOCAL kp IS UNCHAR(TERMINAL:INPUT:GETCHAR()).
-		IF UI_KEY:HASKEY(kp) {
-			UI_NAV[UI_KEY[kp]](). 	// Call UI key action
-		}
+		SET keyCur TO UNCHAR(TERMINAL:INPUT:GETCHAR()).
+		IF keyMap:HASKEY(keyCur)
+			navUI[keyMap[keyCur]]:CALL().
 	}
 	
 	CALL_D.		// Call all daemons.
@@ -377,8 +229,8 @@ SET CONFIG:IPU	TO 200.
 CLEARSCREEN.
 PRINT "Готов.".
 
-// last size: 3491b - 0.07%/m
-// last size: 3667b - 0.07%/m
+// last size: 3491b
+// last size: 3667b
 // last size: 3780b
 // last size: 3824b
 // last size: 4444b

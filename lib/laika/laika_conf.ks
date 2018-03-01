@@ -10,7 +10,7 @@
 
 @LAZYGLOBAL OFF.
 
-GLOBAL LKC_VER	IS "в.0.9.3.".
+GLOBAL LKC_VER	IS "в.1.0.2.".
 
 //					
 // -- INITIAL SETUP --			
@@ -20,7 +20,7 @@ PRINT "  Казненный: laika_conf.".
 
 LOCAL LAIKA IS "Лайка Модули Конфигурация " +LKC_VER.
 
-GLOBAL LK_MAIN IS "ЛАЙКА".
+// GLOBAL LK_MAIN IS "ЛАЙКА".
 GLOBAL msgModF IS "  Найденный: ".	// "FOUND:"
 
 SET CONFIG:IPU	TO 500.			// we need faster cpu
@@ -84,12 +84,12 @@ LOCAL LAST_VOL IS VOL:LENGTH-1.
 // {{{
 LOCAL conf_file IS "config.lk".
 LOCAL C_MOD IS LEXICON().
-GLOBAL LK_MOD IS LIST().	// Should be GLOBAL, will be filled by config.lk.
+GLOBAL LK_ADDON IS LIST().	// Should be GLOBAL, will be filled by config.lk.
 IF EXISTS(conf_file) {
 	RUNPATH(conf_file).
-	FOR m IN LK_MOD {
+	FOR m IN LK_ADDON {
 		SET m[0] TO m[0]:SUBSTRING(0, m[0]:LENGTH-1).
-		IF m[2] = LK_MAIN SET m[2] TO "MAIN".
+//		IF m[2] = LK_MAIN SET m[2] TO "MAIN".
 		
 		// C_MOD LEXICON(					
 		//	[0]	File name (.ks)				
@@ -409,6 +409,7 @@ FUNCTION creditsScreen {
 	PRINT "    LAIKA CREDITS" +ENDL +" ".
 	PRINT "  - Laika Modular Computer".
 	PRINT "  - Laika Computer Configurator".
+	PRINT "  - Laika UI Library".
 	PRINT "  - KoS Preprocessor".
 	PRINT "      are made and maintained by Pacrox.".
 	PRINT "      (https://github.com/pacrox/Laika)".
@@ -418,12 +419,6 @@ FUNCTION creditsScreen {
 	PRINT "      were modified form the originals".
 	PRINT "      made and maintained by ozin370.".
 	PRINT "      (https://github.com/ozin370/Script)".
-
-	PRINT " ".
-	PRINT "  - Laika GUI Library (lk_gui)".
-	PRINT "      is made and maintained by Pacrox.".
-	PRINT "      uses code portions from TDW86.".
-	PRINT "      (https://github.com/KSP-KOS/KSLib)".
 
 	PRINT " ".
 	PRINT "  - KoS Language Interpreter and Compiler".
@@ -720,8 +715,6 @@ FUNCTION buildConfigFile {   // {{{
 
 	CLEARSCREEN.
 	PRINT "[BUILDING LAIKA]".
-	DELETEPATH(f).
-	LOG "GLOBAL LK_CONF IS LEXICON(" TO f.
 
 	// Dump list of mod and configuration to install.
 	LOCAL inst_mod IS LIST().
@@ -729,7 +722,7 @@ FUNCTION buildConfigFile {   // {{{
 	LOCAL confO IS 0.
 	FOR m IN NMODS {
 		IF m[1] {
-			IF m[2][5][1] = "MAIN" SET m[2][5][1] TO LK_MAIN.
+//			IF m[2][5][1] = "MAIN" SET m[2][5][1] TO LK_MAIN.
 			IF m[2][2][0]:DUMP = m[2][2][1]:DUMP
 				SET extra TO FALSE.
 			ELSE {
@@ -783,12 +776,13 @@ FUNCTION buildConfigFile {   // {{{
 
 			inst_mod:ADD(LIST(m[0] +"m", m[2][5][0], m[2][5][1], m[2][5][2],
 				extra, confO, TRUE)).
-//			PRINT " " +ENDL +"[Installing " +m[2][0] +"]".
-//			installMod(m[0], m[2][8][0]).
 		}
 	}
 	// sets the last element's flag to false; this will be used to handle the comma.
 	SET inst_mod[inst_mod:LENGTH()-1][6] TO FALSE.
+
+	DELETEPATH(f).
+	LOG "GLOBAL LK_CONF IS LEXICON(" TO f.
 
 	PRINT " " +ENDL +"[Generating Config File]".
 	// Dump LK_CONF.
@@ -812,7 +806,7 @@ FUNCTION buildConfigFile {   // {{{
 	}
 	LOG ")." TO f.
 
-	LOG "GLOBAL LK_MOD IS LIST(" TO f.
+	LOG "GLOBAL LK_ADDON IS LIST(" TO f.
 	FOR m IN inst_mod {
 		SET line TO "LIST("
 			+quote +m[0] +quote +comma		// Module File Name
@@ -875,30 +869,25 @@ FUNCTION installLaikaCore {   // {{{
 
 	PRINT " " +ENDL +"[Installing Laika Core]".
 	safeCompileTo("0:/lib/laika/", "laika_core.ks", LK_CONF["MAIN_DISK"], d).
-	PRINT " " +ENDL +"[Installing Laika Lib-GUI]".
-	safeCompileTo("0:/lib/laika/", "lib_lk_gui.ks", LK_CONF["MAIN_DISK"], ":/lib/").
+//	PRINT " " +ENDL +"[Installing Laika Lib-GUI]".
+//	safeCompileTo("0:/lib/laika/", "lib_lk_gui.ks", LK_CONF["MAIN_DISK"], ":/lib/").
+	PRINT " " +ENDL +"[Installing Lib LaikaUI]".
+	safeCompileTo("0:/lib/laika/", "lib_laikaUI.ks", LK_CONF["MAIN_DISK"], ":/lib/").
 
 	SET CORE:BOOTFILENAME TO boot.
 }   // }}}
 
-FUNCTION installMod {
+FUNCTION installMod { // {{{
 	PARAMETER m.
 
 	SET PP TO m[2][8][0]:COPY.
 	IF m[2][7]:HASKEY("prebuild")
 		importData( PP, m[2][7]["prebuild"]:CALL(m[2])).
+
 	safeCompileTo("0:/lib/laika/mod/", m[0],  LK_CONF["MODS_DISK"], ":/mod/").
-	SET PP TO LEXICON().
-}
 
-FUNCTION installModOLD {
-	PARAMETER f,
-		extra.
-
-	SET PP TO extra:COPY.
-	safeCompileTo("0:/lib/laika/mod/", f,  LK_CONF["MODS_DISK"], ":/mod/").
 	SET PP TO LEXICON().
-}
+} // }}}
 
 FUNCTION safeCompileTo {   // {{{
 	PARAMETER src_path,
@@ -910,7 +899,6 @@ FUNCTION safeCompileTo {   // {{{
 	LOCAL cwd IS PATH().
 
 	LIST VOLUMES IN VOL.
-	LOCAL d_free IS VOL[dst_disk]:FREESPACE.
 	
 	LOCAL tmp IS "0:/tmp/".
 	DELETEPATH(tmp +src_file).
@@ -931,13 +919,21 @@ FUNCTION safeCompileTo {   // {{{
 		}
 	}
 	CD(cwd).
+	DELETEPATH( dst_disk +dst_dir +src_file +"m").
+	LOCAL d_free IS VOL[dst_disk]:FREESPACE.
 	
 	IF f_size < d_free {
 		COPYPATH(tmp +src_file +"m", dst_disk +dst_dir +src_file +"m").
+		PRINT "      [INFO]: File compiled.".
 		SET ret TO TRUE.
+	} ELSE {
+		PRINT "     [ERROR]: No space available for output file.".
+		SET ppstat[1] TO ppstat[1] +1.
 	}
 
-	DELETEPATH(tmp +src_file +"m").
+	// Clean up /tmp dir		
+	//DELETEPATH(tmp +src_file).	// <- Delete preprocessor output file
+	DELETEPATH(tmp +src_file +"m").	// <- Delete complied file
 	
 	RETURN ret.
 }   // }}}

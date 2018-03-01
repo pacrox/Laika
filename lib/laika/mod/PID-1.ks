@@ -146,49 +146,20 @@ PRINT msgModF +_mFullN.		// Module loaded message.
 
 SET _extraP TO import( _extraP, _defaultP).
 
-// >> Adds the new menu structure to MenuRegistry		{{{	
-//									
-//	LK_MENUS:ADD(							
-//		menu_name,						
-//		LIST(							
-//			back_menu,					
-//			LIST(button_name),				
-//			LIST(is_submenu?)				
-//		)							
-// 	).								
-//								}}}	
-LK_MENUS:ADD(
-	_mName, LIST( _mParent,	// module menu name - parent menu name
-		LIST("ACTIVATE", "DEACTIVATE", "", "", "", "", "", ""),
-		LIST(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+// >> Adds the new menu structure to MenuRegistry			
+LK_MOD:ADD( _mName,
+	UIinitMenu( 0, _mName, LEXICON(
+			1, LIST("ACTIVATE", pidActivate@),
+			2, LIST("DEACTIVATE", pidDeactivate@)
+	))
 ).
 
-
-// >> Install module menu to desired parent-menu's button	{{{	
-//									
-//	LK_MENUS[menu_name][0] = back_menu				
-//      	              [1] = LIST(button_name)			
-//	 		      [2] = LIST(is_submenu?)			
-//								}}}	
-SET LK_MENUS[_mParent][1][_mButton-1] TO _mName.
-SET LK_MENUS[_mParent][2][_mButton-1] TO TRUE.
-
-
-// >> Adds module menu commands to CommandsRegistry.		{{{	
-//									
-//	LK_CMDS:ADD( menu_name,						
-//		LIST (							
-//			LEXICON(button_name, function),			
-//			LIST(daemon_running_while_on_this_menu)		
-//		)							
-//	).								
-//								}}}	
-LK_CMDS:ADD(_mName, LIST(
-	LEXICON(
-		"ACTIVATE",	pidActivate@,
-		"DEACTIVATE",	pidDeactivate@),
-	LIST(),
-	LEXICON())
+// >> Install module menu to desired parent-menu's button		
+UIaddCall(
+	LK_MOD[_mParent],
+	0, LEXICON(
+		_mButton, LIST( _mName, {gotoMenu(LK_MOD[_mName]).})
+	)
 ).
 
 // }}}

@@ -6,6 +6,7 @@
 // * Structure format type 3.	
 // * Uses PreProcessor.		
 // * Updated for KoS 1.1.5.0.	
+// * Upgraded for Laika v.1.0.	
 
 //			
 // CONFIG SETUP		
@@ -147,60 +148,43 @@ PRINT msgModF +_mFullN.		// Module loaded message.
 // Uncomment if needed (safe function).
 //SET _extraP TO import( _extraP, _defaultP).
 
-// >> Adds the new menu structure to MenuRegistry		{{{	
-//									
-//	LK_MENUS:ADD(							
-//		menu_name,						
-//		LIST(							
-//			back_menu,					
-//			LIST(button_name),				
-//			LIST(is_submenu?)				
-//		)							
-// 	).								
-//								}}}	
-LK_MENUS:ADD(
-	_mName, LIST( _mParent,	// module menu name - parent menu name
-		LIST("A", "B", "C", "D", "E", "F", "G", "H"),
-		LIST(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+// >> Adds the new menu structure to MenuRegistry			
+LK_MOD:ADD( _mName,
+	UIinitMenu( 0, _mName, LEXICON(
+			1, LIST("A", {dUpdate(status, "STATUS: char A").}),
+			2, LIST("B", {dUpdate(status, "STATUS: a number B").}),
+			3, LIST("C", {dUpdate(status, "STATUS: string C").}),
+			4, LIST("D", {dUpdate(status, "STATUS: dot D").}),
+			5, LIST("E", testFunct@)
+	))
 ).
 
 
-// >> Install module menu to desired parent-menu's button	{{{	
-//									
-//	LK_MENUS[menu_name][0] = back_menu				
-//      	              [1] = LIST(button_name)			
-//	 		      [2] = LIST(is_submenu?)			
-//								}}}	
-SET LK_MENUS[_mParent][1][_mButton-1] TO _mName.
-SET LK_MENUS[_mParent][2][_mButton-1] TO TRUE.
-
-
-// >> Adds module menu commands to CommandsRegistry.		{{{	
-//									
-//	LK_CMDS:ADD( menu_name,						
-//		LIST (							
-//			LEXICON(button_name, function),			
-//			LIST(daemon_running_while_on_this_menu)		
-//		)							
-//	).								
-//								}}}	
-LK_CMDS:ADD(_mName, LIST(
-	LEXICON(
-		"A", {PRINT "ENTRY IS A              " AT(4,5).},
-		"E", {PRINT "ENTRY IS E              " AT(4,5).},
-		"H", LK_TEST_MENU@),
-	LIST(),
-	LEXICON())
+// >> Install module menu to desired parent-menu's button		
+UIaddCall(
+	LK_MOD[_mParent],
+	0, LEXICON(
+		_mButton, LIST( _mName, {gotoMenu(LK_MOD[_mName]).})
+	)
 ).
-
 // }}}
 
 // Optional Functions called by CommadsRegistry (if needed).
-LOCAL FUNCTION LK_TEST_MENU {
-	DPRINT("THIS IS LAIKA TEST B FUNCTION       ",2,3).
-	DPRINT("THIS IS " +_mFullN +" " +_mName,2,4).
-} 
+LOCAL status	IS UIaddDisp( LK_MOD[_mName], "STATUS: NOTHING TO DECLARE", 2, 2).
+LOCAL fld1	IS UIaddDisp( LK_MOD[_mName], " ", 2, 3).
+LOCAL fld2	IS UIaddDisp( LK_MOD[_mName], " ", 2, 4).
 
+LOCAL Show IS FALSE.
+LOCAL FUNCTION testFunct {
+	IF Show {
+		dClear( fld1).
+		dClear( fld2).
+	} ELSE {
+		dUpdate( fld1, "THIS IS LAIKA TEST E FUNCTION.").
+		dUpdate( fld2, "THIS IS " +_mFullN +" " +_mName).
+	}
+	SET Show TO (NOT Show).
+} 
 
 //@ ENDIF.		}}}	
 

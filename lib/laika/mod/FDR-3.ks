@@ -126,83 +126,57 @@ PRINT msgModF +_mFullN.		// Module loaded message.
 
 SET _extraP TO import( _extraP, _defaultP).
 
-// >> Adds the new menu structure to MenuRegistry		{{{	
-//									
-//	LK_MENUS:ADD(							
-//		menu_name,						
-//		LIST(							
-//			back_menu,					
-//			LIST(button_name),				
-//			LIST(is_submenu?)				
-//		)							
-// 	).								
-//								}}}	
-LK_MENUS:ADD(
-	_mName, LIST( _mParent,		// module menu name - parent menu name
-		LIST("", "", "", "START", "", "", "", "STOP"),
-		LIST(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+// >> Adds the new menu structure to MenuRegistry			
+LK_MOD:ADD( _mName,
+	UIinitMenu( 0, _mName, LEXICON(
+			7, LIST("START", startLOG@),
+			8, LIST("STOP", stopLOG@)
+	))
 ).
 
-
-// >> Install module menu to desired parent-menu's button	{{{	
-//									
-//	LK_MENUS[menu_name][0] = back_menu				
-//      	              [1] = LIST(button_name)			
-//	 		      [2] = LIST(is_submenu?)			
-//								}}}	
-SET LK_MENUS[_mParent][1][_mButton-1] TO _mName.
-SET LK_MENUS[_mParent][2][_mButton-1] TO TRUE.
-
-
-// >> Adds module menu commands to CommandsRegistry.		{{{	
-//									
-//	LK_CMDS:ADD( menu_name,						
-//		LIST (							
-//			LEXICON(button_name, function),			
-//			LIST(daemon_running_while_on_this_menu)		
-//			LEXICON(exported_functions_to_Laika)		
-//		)							
-//	).								
-//								}}}	
-LK_CMDS:ADD(_mName, LIST(   
-	LEXICON(
-		"START",	startLOG@,
-		"STOP",		stopLOG@
-	),
-	LIST(disUpd@),
-	LEXICON("DISP", display@))
+// >> Install module menu to desired parent-menu's button		
+UIaddCall(
+	LK_MOD[_mParent],
+	0, LEXICON(
+		_mButton, LIST( _mName, {gotoMenu(LK_MOD[_mName]).})
+	)
 ).
+
+// >> Install module specific damons					
+SET LK_MOD[_mName]["daemon"] TO LIST( dispUpd@).
+
 // }}}
 
 //			
 // DISPLAY MANAGER	
 //			
 // {{{
-LOCAL FUNCTION display {
-	DPRINT(_mFullN, "c", 0).
-	DLINE("-", 1).
+LOCAL disp IS LEXICON().
 
-	DLINE("_", -2).
-	DPRINT("SR: " +_extraP["Sampling Rate"] +"s", 2, -1).
-	//@IF (Export CSV):
-	DPRINT("CSV", -10, -1).
-	//@ENDIF.
-	//@IF (Export Octave):
-	DPRINT("OCT", -5, -1).
-	//@ENDIF.
+UIaddDisp( LK_MOD[_mName], _mFullN, 	"c", 0).
+UIaddDisp( LK_MOD[_mName], "-",		"l", 1).
+UIaddDisp( LK_MOD[_mName], "_",		"l", -2).
 
-	disStatus.
-}
+//@IF (Export Octave):
+UIaddDisp( LK_MOD[_mName], "OCT",	"<" + 15/16, -1).
+//@ENDIF.
+//@IF (Export CSV):
+UIaddDisp( LK_MOD[_mName], "CSV",	"<" + 13/16, -1).
+//@ENDIF.
 
-LOCAL FUNCTION disUpd {
-	DPRINT("Δt: " +ROUND(dT,3) +"s         ", 16, -1).
+SET disp["sampling"] TO	UIaddDisp( LK_MOD[_mName], "SR: " +_extraP["Sampling Rate"] +"s", 2, -1).
+SET disp["dT"] TO 	UIaddDisp( LK_MOD[_mName], "Δt: 0s", 16, -1).
+SET disp["status"] TO 	UIaddDisp( LK_MOD[_mName], "IDLE.", 2, 3).
+
+LOCAL FUNCTION dispUpd {
+	dUpdate( disp["dT"], "Δt: " +ROUND(dT,3) +"s").
 }
 
 LOCAL FUNCTION disStatus {
 	IF DAEMONS:HASKEY("FDR3")
-		DPRINT("Logging data...", 2, 3).
+		dUpdate( disp["status"], "LOGGING ACTIVE.").
 	ELSE
-		DPRINT("Idle.          ", 2, 3).
+		dUpdate( disp["status"], "IDLE.").
 }
 // }}}
 
